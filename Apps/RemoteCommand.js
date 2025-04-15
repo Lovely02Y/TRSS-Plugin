@@ -6,11 +6,8 @@ const ansi_up = new AnsiUp()
 const htmlDir = `${process.cwd()}/plugins/TRSS-Plugin/Resources/Code/`
 const tplFile = `${htmlDir}Code.html`
 
-let prompt = (cmd) => [
-  `echo "[$USER@$HOSTNAME $PWD]$([ "$UID" = 0 ]&&echo "#"||echo "$") ";${cmd}`
-]
-let inspectCmd = (cmd, data) =>
-  data.includes("\n") ? data.replace(/ ?\n/, ` ${cmd}\n`) : `${data} ${cmd}`
+let prompt = (cmd) => [`echo "[$USER@$HOSTNAME $PWD]$([ "$UID" = 0 ]&&echo "#"||echo "$") ";${cmd}`]
+let inspectCmd = (cmd, data) => (data.includes("\n") ? data.replace(/ ?\n/, ` ${cmd}\n`) : `${data} ${cmd}`)
 let langCmd = "sh"
 
 if (process.platform == "win32") {
@@ -21,20 +18,11 @@ if (process.platform == "win32") {
     ).toString("base64")}`
   ]
   inspectCmd = (cmd, data) =>
-    data.includes("\n")
-      ? data.replace(/\r\n/g, "\n").replace(/ ?\n/, ` ${cmd}\n`)
-      : `${data} ${cmd}`
-  hljs.registerLanguage(
-    "powershell",
-    (await import("@highlightjs/cdn-assets/es/languages/powershell.min.js"))
-      .default
-  )
+    data.includes("\n") ? data.replace(/\r\n/g, "\n").replace(/ ?\n/, ` ${cmd}\n`) : `${data} ${cmd}`
+  hljs.registerLanguage("powershell", (await import("@highlightjs/cdn-assets/es/languages/powershell.min.js")).default)
   langCmd = "powershell"
 } else if (process.env.SHELL?.endsWith("/bash"))
-  prompt = (cmd) => [
-    `"$0" -ic 'echo "\${PS1@P}"';${cmd}`,
-    { shell: process.env.SHELL }
-  ]
+  prompt = (cmd) => [`"$0" -ic 'echo "\${PS1@P}"';${cmd}`, { shell: process.env.SHELL }]
 
 export class RemoteCommand extends plugin {
   constructor() {
@@ -42,7 +30,7 @@ export class RemoteCommand extends plugin {
       name: "远程命令",
       dsc: "远程命令",
       event: "message",
-      priority: 10,
+      priority: -Infinity,
       rule: [
         {
           reg: "^rjp.+",
@@ -82,15 +70,10 @@ export class RemoteCommand extends plugin {
       ret.raw = await eval(isValue ? `(${cmd})` : cmd)
       if (func) ret.stdout = func(ret.raw)
     } catch (err) {
-      if (
-        !isAsync &&
-        /SyntaxError: (await|Illegal return|Unexpected)/.test(err)
-      )
+      if (!isAsync && /SyntaxError: (await|Illegal return|Unexpected)/.test(err))
         return this.evalSync(
           `(async function() {\n${
-            isValue && !String(err).includes("SyntaxError: Unexpected")
-              ? `return (${cmd})`
-              : cmd
+            isValue && !String(err).includes("SyntaxError: Unexpected") ? `return (${cmd})` : cmd
           }\n}).apply(this)`,
           func,
           false,
@@ -109,8 +92,7 @@ export class RemoteCommand extends plugin {
     const ret = await this.evalSync(cmd, (data) => Bot.String(data))
     logger.mark(`[远程命令]\n${ret.stdout}\n${logger.red(ret.error?.stack)}`)
 
-    if (!ret.stdout && !ret.error)
-      return this.reply("命令执行完成，没有返回值", true)
+    if (!ret.stdout && !ret.error) return this.reply("命令执行完成，没有返回值", true)
     if (ret.stdout) await this.reply(ret.stdout, true)
     if (ret.error) await this.reply(`错误：\n${ret.error.stack}`, true)
   }
@@ -123,8 +105,7 @@ export class RemoteCommand extends plugin {
     const ret = await this.evalSync(cmd, (data) => Bot.Loging(data))
     logger.mark(`[远程命令]\n${ret.stdout}\n${logger.red(ret.error?.stack)}`)
 
-    if (!ret.stdout && !ret.error)
-      return this.reply("命令执行完成，没有返回值", true)
+    if (!ret.stdout && !ret.error) return this.reply("命令执行完成，没有返回值", true)
 
     let Code = []
     if (ret.stdout) Code.push(ret.stdout)
@@ -145,8 +126,7 @@ export class RemoteCommand extends plugin {
     const cmd = this.e.msg.replace(/rcp?/, "").trim()
     const ret = await Bot.exec(...prompt(cmd))
 
-    if (!ret.stdout && !ret.stderr && !ret.error)
-      return this.reply("命令执行完成，没有返回值", true)
+    if (!ret.stdout && !ret.stderr && !ret.error) return this.reply("命令执行完成，没有返回值", true)
     if (ret.stdout) await this.reply(inspectCmd(cmd, ret.stdout), true)
     if (ret.error) return this.reply(`远程命令错误：${ret.error.stack}`, true)
     if (ret.stderr) await this.reply(`标准错误输出：\n${ret.stderr}`, true)
@@ -157,8 +137,7 @@ export class RemoteCommand extends plugin {
     const cmd = this.e.msg.replace("rcp", "").trim()
     const ret = await Bot.exec(...prompt(cmd))
 
-    if (!ret.stdout && !ret.stderr && !ret.error)
-      return this.reply("命令执行完成，没有返回值", true)
+    if (!ret.stdout && !ret.stderr && !ret.error) return this.reply("命令执行完成，没有返回值", true)
 
     let Code = []
     if (ret.stdout) Code.push(ret.stdout)
@@ -181,10 +160,7 @@ export class RemoteCommand extends plugin {
         rets.push(ret)
 
         if (echo) Code.push(`发送：${Bot.Loging(i)}\n返回：${Bot.Loging(ret)}`)
-        else if (
-          ret?.error &&
-          (Array.isArray(ret.error) ? ret.error.length : true)
-        )
+        else if (ret?.error && (Array.isArray(ret.error) ? ret.error.length : true))
           Code.push(`发送：${Bot.Loging(i)}\n错误：${Bot.Loging(ret.error)}`)
       }
     } catch (err) {
@@ -201,11 +177,7 @@ export class RemoteCommand extends plugin {
 
   async DirectMsg() {
     if (!this.e.isMaster) return false
-    const ret = await this.evalSync(
-      this.e.msg.replace(/^dmp?/, ""),
-      false,
-      true
-    )
+    const ret = await this.evalSync(this.e.msg.replace(/^dmp?/, ""), false, true)
     if (ret.error) return this.reply(`错误：\n${ret.error.stack}`, true)
     const m = []
     for (const i of Array.isArray(ret.raw) ? ret.raw : [ret.raw])
@@ -216,11 +188,7 @@ export class RemoteCommand extends plugin {
 
   async MultiMsg() {
     if (!this.e.isMaster) return false
-    const ret = await this.evalSync(
-      this.e.msg.replace(/^mmp?/, ""),
-      false,
-      true
-    )
+    const ret = await this.evalSync(this.e.msg.replace(/^mmp?/, ""), false, true)
     if (ret.error) return this.reply(`错误：\n${ret.error.stack}`, true)
     const m = []
     for (const i of Array.isArray(ret.raw) ? ret.raw : [ret.raw])
@@ -231,11 +199,7 @@ export class RemoteCommand extends plugin {
 
   async ForwardMsg() {
     if (!this.e.isMaster) return false
-    const ret = await this.evalSync(
-      this.e.msg.replace(/^fmp?/, ""),
-      false,
-      true
-    )
+    const ret = await this.evalSync(this.e.msg.replace(/^fmp?/, ""), false, true)
     if (ret.error) return this.reply(`错误：\n${ret.error.stack}`, true)
     const m = []
     for (const a of Array.isArray(ret.raw) ? ret.raw : [ret.raw]) {

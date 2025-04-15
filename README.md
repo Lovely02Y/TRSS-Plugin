@@ -30,9 +30,23 @@
 
 2. 安装：[GitHub](https://github.com/TimeRainStarSky/TRSS-Plugin) 或 [Gitee](https://gitee.com/TimeRainStarSky/TRSS-Plugin)
 
+- Github
+
+```bash
+git clone --depth=1 https://github.com/Lovely02Y/TRSS-Plugin.git ./plugins/TRSS-Plugin/
 ```
-git clone --depth 1 https://Yunzai.TRSS.me plugins/TRSS-Plugin
-pnpm i
+
+> [!NOTE]
+> 如果你的网络环境较差，无法连接到 Github，可以使用 [02](https://github.com/Lovely-02) 提供的文件代理加速下载服务
+>
+> ```
+> git clone --depth=1 https://ghproxy.521002.xyz/https://github.com/Lovely02Y/TRSS-Plugin.git ./plugins/TRSS-Plugin/
+> ```
+
+- Gitcode
+
+```bash
+git clone --depth=1 https://gitcode.com/Lovely-02/TRSS-Plugin.git ./plugins/TRSS-Plugin/
 ```
 
 3. 安装 `图片修复` | `图片背景去除` | `语音合成`，不用可忽略
@@ -87,6 +101,7 @@ tar -xvJf ChatWaifuJP.txz
 ```
 
 - 语音合成 原神模型：
+
 ```
 cd GenshinVoice
 curl -LO https://github.com/TimeRainStarSky/TRSS-Plugin/releases/download/latest/G_809000.pth.xz
@@ -247,7 +262,7 @@ bash server.sh [端口]
 
 - 问：`error: Microsoft Visual C++ 14.0 or greater is required.`
 - 答：下载安装 [Microsoft C++ 生成工具](https://visualstudio.microsoft.com/zh-hans/visual-cpp-build-tools)
-![Microsoft C++ 生成工具](Picture/Microsoft_C++_生成工具.png)
+  ![Microsoft C++ 生成工具](Picture/Microsoft_C++_生成工具.png)
 
 - 问：`'bash' 不是内部或外部命令，也不是可运行的程序或批处理文件` `bash : 无法将“sh”项识别为 cmdlet、函数、脚本文件或可运行程序的名称。请检查名称的拼写，如果包括路径，请确保路径正确，然后再试一次。`
 - 答：改用 `Git Bash`
@@ -263,6 +278,7 @@ bash server.sh [端口]
 ## 联系方式
 
 - QQ 群组：
+
 1. [659945190](https://jq.qq.com/?k=VBuHGPv3)
 2. [1027131254](https://jq.qq.com/?k=Af0pTDHU)
 3. [300714227](https://jq.qq.com/?k=V2xVpaR7)
