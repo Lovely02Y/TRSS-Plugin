@@ -13,7 +13,7 @@ export class Markdown extends plugin {
       name: "Markdown",
       dsc: "Markdown",
       event: "message",
-      priority: -Infinity,
+      priority: 0,
       rule: [
         {
           reg: "^md.+",

@@ -6,7 +6,7 @@ export class QRCode extends plugin {
       name: "二维码生成",
       dsc: "二维码生成",
       event: "message",
-      priority: -Infinity,
+      priority: 0,
       rule: [
         {
           reg: "^#二维码.+",

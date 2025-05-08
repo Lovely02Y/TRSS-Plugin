@@ -10,7 +10,7 @@ export class File extends plugin {
       name: "文件操作",
       dsc: "文件操作",
       event: "message",
-      priority: -Infinity,
+      priority: 0,
       rule: [
         {
           reg: "^文件查看",
@@ -83,10 +83,8 @@ export class File extends plugin {
 
       if (res) {
         let fileUrl
-        if (this.e.group?.getFileUrl)
-          fileUrl = await this.e.group.getFileUrl(res.fid)
-        else if (this.e.friend?.getFileUrl)
-          fileUrl = await this.e.friend.getFileUrl(res)
+        if (this.e.group?.getFileUrl) fileUrl = await this.e.group.getFileUrl(res.fid)
+        else if (this.e.friend?.getFileUrl) fileUrl = await this.e.friend.getFileUrl(res)
 
         if (fileUrl) await this.reply(`文件上传完成：${fileUrl}`, true)
         else await this.reply(`文件上传完成：${JSON.stringify(res)}`, true)
@@ -109,15 +107,11 @@ export class File extends plugin {
     if (!this.e.file) return false
 
     this.finish("Download")
-    const filePath = `${
-      es.msg.replace("文件下载", "").trim() || process.cwd()
-    }/${this.e.file.name}`
+    const filePath = `${es.msg.replace("文件下载", "").trim() || process.cwd()}/${this.e.file.name}`
     let fileUrl
     if (this.e.file.url) fileUrl = this.e.file.url
-    else if (this.e.group?.getFileUrl)
-      fileUrl = await this.e.group.getFileUrl(this.e.file.fid)
-    else if (this.e.friend?.getFileUrl)
-      fileUrl = await this.e.friend.getFileUrl(this.e.file.fid)
+    else if (this.e.group?.getFileUrl) fileUrl = await this.e.group.getFileUrl(this.e.file.fid)
+    else if (this.e.friend?.getFileUrl) fileUrl = await this.e.friend.getFileUrl(this.e.file.fid)
     this.e = es
 
     if (!fileUrl) {
@@ -130,10 +124,7 @@ export class File extends plugin {
       return false
     }
     Running = true
-    await this.reply(
-      `开始下载文件，请稍等……\n文件链接：${fileUrl}\n保存路径：${filePath}`,
-      true
-    )
+    await this.reply(`开始下载文件，请稍等……\n文件链接：${fileUrl}\n保存路径：${filePath}`, true)
 
     try {
       await Bot.download(fileUrl, filePath)

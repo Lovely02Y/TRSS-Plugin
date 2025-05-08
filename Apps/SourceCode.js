@@ -12,7 +12,7 @@ export class SourceCode extends plugin {
       name: "SourceCode",
       dsc: "SourceCode",
       event: "message",
-      priority: -Infinity,
+      priority: 0,
       rule: [
         {
           reg: "^sc(\\d+~\\d+)?.+",
